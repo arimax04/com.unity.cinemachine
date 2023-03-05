@@ -525,9 +525,9 @@ namespace Cinemachine
             float nearbyDistance = k_PrecisionSlush * 5;
             var scene = gameObject.scene;
             PhysicsScene pscene;
-            if (scene.IsValid())
+            if (gameObject.scene.IsValid())
             {
-                pscene = scene.GetPhysicsScene();
+                pscene = gameObject.scene.GetPhysicsScene();
             } else
             {
                 pscene = Physics.defaultPhysicsScene;
@@ -660,9 +660,9 @@ namespace Cinemachine
             // Pull it out of any intersecting obstacles
             RaycastHit hitInfo;
             PhysicsScene pscene;
-            if (scene.IsValid())
+            if (gameObject.scene.IsValid())
             {
-                pscene = scene.GetPhysicsScene();
+                pscene = gameObject.scene.GetPhysicsScene();
             } else
             {
                 pscene = Physics.defaultPhysicsScene;
