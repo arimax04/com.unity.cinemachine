@@ -523,7 +523,16 @@ namespace Cinemachine
 
             // Check for nearby obstacles.  Are we in a corner?
             float nearbyDistance = k_PrecisionSlush * 5;
-            int numFound = Physics.SphereCastNonAlloc(
+            var scene = gameObject.scene;
+            PhysicsScene pscene;
+            if (scene.IsValid())
+            {
+                pscene = scene.GetPhysicsScene();
+            } else
+            {
+                pscene = Physics.defaultPhysicsScene;
+            }
+            int numFound = pscene.SphereCastNonAlloc(
                 pos, nearbyDistance, pushDir.normalized, m_CornerBuffer, 0,
                 m_CollideAgainst & ~m_TransparentLayers, QueryTriggerInteraction.Ignore);
             if (numFound > 1)
@@ -650,7 +659,15 @@ namespace Cinemachine
 
             // Pull it out of any intersecting obstacles
             RaycastHit hitInfo;
-            int numObstacles = Physics.OverlapSphereNonAlloc(
+            PhysicsScene pscene;
+            if (scene.IsValid())
+            {
+                pscene = scene.GetPhysicsScene();
+            } else
+            {
+                pscene = Physics.defaultPhysicsScene;
+            }
+            int numObstacles = pscene.OverlapSphereNonAlloc(
                 cameraPos, m_CameraRadius, s_ColliderBuffer,
                 m_CollideAgainst, QueryTriggerInteraction.Ignore);
             if (numObstacles == 0 && m_TransparentLayers != 0
@@ -675,6 +692,7 @@ namespace Cinemachine
                 scratchCollider.radius = m_CameraRadius;
 
                 Vector3 newCamPos = cameraPos;
+
                 for (int i = 0; i < numObstacles; ++i)
                 {
                     Collider c = s_ColliderBuffer[i];
@@ -694,7 +712,7 @@ namespace Cinemachine
                                 newCamPos = ray.GetPoint(hitInfo.distance) - (dir * k_PrecisionSlush);
                         }
                     }
-                    if (Physics.ComputePenetration(
+                    if (pscene.ComputePenetration(
                         scratchCollider, newCamPos, Quaternion.identity,
                         c, c.transform.position, c.transform.rotation,
                         out var offsetDir, out var offsetDistance))
