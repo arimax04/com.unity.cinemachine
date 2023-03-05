@@ -428,7 +428,7 @@ namespace Cinemachine
                     if (rayLength > Epsilon)
                     {
                         if (RuntimeUtility.RaycastIgnoreTag(
-                            ray, out hitInfo, rayLength, layerMask, m_IgnoreTag))
+                            ray, out hitInfo, rayLength, layerMask, m_IgnoreTag, gameObject))
                         {
                             // Pull camera forward in front of obstacle
                             float adjustment = Mathf.Max(0, hitInfo.distance - k_PrecisionSlush);
@@ -461,7 +461,7 @@ namespace Cinemachine
             distance = Mathf.Min(distance, clampedDistance + k_PrecisionSlush);
 
             if (RuntimeUtility.RaycastIgnoreTag(ray, out var hitInfo, distance,
-                    m_CollideAgainst & ~m_TransparentLayers, m_IgnoreTag))
+                    m_CollideAgainst & ~m_TransparentLayers, m_IgnoreTag, gameObject))
             {
                 // We hit something.  Stop there and take a step along that wall.
                 float adjustment = hitInfo.distance - k_PrecisionSlush;
@@ -484,7 +484,7 @@ namespace Cinemachine
             float d = dir.magnitude;
             if (d < Epsilon || RuntimeUtility.RaycastIgnoreTag(
                     new Ray(lookAtPos, dir), out _, d - k_PrecisionSlush,
-                    m_CollideAgainst & ~m_TransparentLayers, m_IgnoreTag))
+                    m_CollideAgainst & ~m_TransparentLayers, m_IgnoreTag, gameObject))
                 return currentPos;
 
             // All clear
@@ -494,7 +494,7 @@ namespace Cinemachine
             if (distance > Epsilon)
             {
                 if (!RuntimeUtility.RaycastIgnoreTag(ray, out hitInfo, distance,
-                        m_CollideAgainst & ~m_TransparentLayers, m_IgnoreTag))
+                        m_CollideAgainst & ~m_TransparentLayers, m_IgnoreTag, gameObject))
                 {
                     pos = ray.GetPoint(distance); // no obstacles - all good
                     extra.AddPointToDebugPath(pos);
@@ -532,6 +532,7 @@ namespace Cinemachine
             {
                 pscene = Physics.defaultPhysicsScene;
             }
+            UnityEngine.Debug.Log(pscene);
             int numFound = pscene.SphereCast(
                 pos, nearbyDistance, pushDir.normalized, m_CornerBuffer, 0,
                 m_CollideAgainst & ~m_TransparentLayers, QueryTriggerInteraction.Ignore);
@@ -678,7 +679,7 @@ namespace Cinemachine
                 float d = distance - m_MinimumDistanceFromTarget;
                 Vector3 targetPos = lookAtPos + dir * m_MinimumDistanceFromTarget;
                 if (RuntimeUtility.RaycastIgnoreTag(new Ray(targetPos, dir), 
-                    out hitInfo, d, m_CollideAgainst, m_IgnoreTag))
+                    out hitInfo, d, m_CollideAgainst, m_IgnoreTag, gameObject))
                 {
                     // Only count it if there's an incoming collision but not an outgoing one
                     Collider c = hitInfo.collider;
@@ -748,7 +749,7 @@ namespace Cinemachine
                 Ray ray = new Ray(pos, dir.normalized);
                 if (RuntimeUtility.RaycastIgnoreTag(ray, out _,
                         distance - m_MinimumDistanceFromTarget,
-                        m_CollideAgainst & ~m_TransparentLayers, m_IgnoreTag))
+                        m_CollideAgainst & ~m_TransparentLayers, m_IgnoreTag, gameObject))
                     return true;
             }
             return false;

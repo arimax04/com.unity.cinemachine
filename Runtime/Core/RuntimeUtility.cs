@@ -61,12 +61,22 @@ namespace Cinemachine
         /// <param name="ignoreTag">Tag to ignore</param>
         /// <returns>True if something was hit.  Results in hitInfo</returns>
         public static bool RaycastIgnoreTag(
-            Ray ray, out RaycastHit hitInfo, float rayLength, int layerMask, in string ignoreTag)
+            Ray ray, out RaycastHit hitInfo, float rayLength, int layerMask, in string ignoreTag, GameObject go = null)
         {
+            PhysicsScene pscene;
+            if (go != null && go.scene.IsValid())
+            {
+                pscene = go.scene.GetPhysicsScene();
+            }
+            else
+            {
+                pscene = Physics.defaultPhysicsScene;
+            }
             if (ignoreTag.Length == 0)
             {
-                if (Physics.Raycast(
-                    ray, out hitInfo, rayLength, layerMask,
+                
+                if (pscene.Raycast(
+                    ray.origin, ray.direction, out hitInfo, rayLength, layerMask,
                     QueryTriggerInteraction.Ignore))
                 {
                     return true;
@@ -75,8 +85,8 @@ namespace Cinemachine
             else
             {
                 int closestHit = -1;
-                int numHits = Physics.RaycastNonAlloc(
-                    ray, s_HitBuffer, rayLength, layerMask, QueryTriggerInteraction.Ignore);
+                int numHits = pscene.Raycast(
+                    ray.origin, ray.direction, s_HitBuffer, rayLength, layerMask, QueryTriggerInteraction.Ignore);
                 for (int i = 0; i < numHits; ++i)
                 {
                     if (s_HitBuffer[i].collider.CompareTag(ignoreTag))
