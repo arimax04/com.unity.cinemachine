@@ -532,7 +532,7 @@ namespace Cinemachine
             {
                 pscene = Physics.defaultPhysicsScene;
             }
-            int numFound = pscene.SphereCastNonAlloc(
+            int numFound = pscene.SphereCast(
                 pos, nearbyDistance, pushDir.normalized, m_CornerBuffer, 0,
                 m_CollideAgainst & ~m_TransparentLayers, QueryTriggerInteraction.Ignore);
             if (numFound > 1)
@@ -667,7 +667,7 @@ namespace Cinemachine
             {
                 pscene = Physics.defaultPhysicsScene;
             }
-            int numObstacles = pscene.OverlapSphereNonAlloc(
+            int numObstacles = pscene.OverlapSphere(
                 cameraPos, m_CameraRadius, s_ColliderBuffer,
                 m_CollideAgainst, QueryTriggerInteraction.Ignore);
             if (numObstacles == 0 && m_TransparentLayers != 0
@@ -712,7 +712,7 @@ namespace Cinemachine
                                 newCamPos = ray.GetPoint(hitInfo.distance) - (dir * k_PrecisionSlush);
                         }
                     }
-                    if (pscene.ComputePenetration(
+                    if (Physics.ComputePenetration(
                         scratchCollider, newCamPos, Quaternion.identity,
                         c, c.transform.position, c.transform.rotation,
                         out var offsetDir, out var offsetDistance))
